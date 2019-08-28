@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <conio.h>
+void menu()
+{
+	printf("\t\t\n\n\n");
+	printf("\t\t**************************************\n");
+	printf("\t\t*    1.输入字符集大小                *\n");
+	printf("\t\t*    2.输入待编码字符及其权值        *\n");
+	printf("\t\t*    3.建立哈夫曼树HT                *\n");
+	printf("\t\t*    4.完成哈夫曼编码HC，并显示编码  *\n");
+	printf("\t\t*    5.退出                          *\n");
+	printf("\t\t**************************************\n");
+	printf("\t\t     请选择：");
+}
+typedef struct
+{
+	char name;
+	float weight;
+	unsigned int parent, lchild, rchild;
+}HTNode, *HuffmanTree;
+typedef char**HuffmanCode;
+int min1(HuffmanTree t, int i)
+{
+	int j, flag;
+	float k = 100000;
+	for (j = 1; j <= i; j++)
+		if (t[j].weight < k&&t[j].parent == 0)
+			k = t[j].weight, flag = j;
+	t[flag].parent = 1;
+	return flag;
+}
+void select(HuffmanTree t, int i, int&s1, int&s2)
+{
+	int j;
+	s1 = min1(t, i);
+	s2 = min1(t, i);
+	if (t[s1].weight >= t[s2].weight)
+	{
+		if (t[s1].weight = t[s2].weight)
+		{
+			if (s1 > s2)
+			{
+				j = s1;
+				s1 = s2;
+				s2 = j;
+			}
+		}
+		j = s1;
+		s1 = s2;
+		s2 = j;
+	}
+}
+void HuffmanTreeing(HuffmanTree &HT, float *w,char *a, int n)
+{
+	int m, i, s1, s2;
+	HuffmanTree p;
+	if (n <= 1)
+		return;
+	m = 2 * n - 1;
+	HT = (HuffmanTree)malloc((m + 1) * sizeof(HTNode));
+	for (p = HT + 1, i = 1; i <= n; ++i, ++p,++a, ++w)
+	{
+		(*p).name = *a;
+		(*p).weight = *w;
+		(*p).parent = 0;
+		(*p).rchild = 0;
+		(*p).lchild = 0;
+	}
+	for (; i <= m; ++i, ++p)
+		(*p).parent = 0;
+	for (i = n + 1; i <= m; ++i)
+	{
+		select(HT, i - 1, s1, s2);
+		HT[s1].parent = HT[s2].parent = i;
+		HT[i].lchild = s1;
+		HT[i].rchild = s2;
+		HT[i].weight = HT[s1].weight + HT[s2].weight;
+	}
+	printf("\t\t\tok!");
+	_getch();
+	return;
+}
+void HuffmanCoding(HuffmanTree &HT, HuffmanCode &HC, float* w, int n)
+{
+	int start, i;
+	unsigned c, f;
+	char*cd;
+	HC = (HuffmanCode)malloc((n + 1) * sizeof(char*));
+	cd = (char*)malloc(n * sizeof(char));
+	cd[n - 1] = '\0';
+	for (i = 1; i <= n; i++)
+	{
+		start = n - 1;
+		for (c = i, f = HT[i].parent; f != 0; c = f, f = HT[f].parent)
+			if (HT[f].lchild == c)
+				cd[--start] = '0';
+			else
+				cd[--start] = '1';
+		HC[i] = (char*)malloc((n - start) * sizeof(char));
+		strcpy(HC[i], &cd[start]);
+	}
+	free(cd);
+}
+int main()
+{
+	int t, n, i;
+	float *w;
+	char *a;
+	HuffmanTree HT;
+	HuffmanCode HC;
+	while (1)
+	{
+		system("cls");
+		menu();
+		scanf("%d", &t);
+		switch (t)
+		{
+		case 1:
+		{
+			printf("\t\t请输入字符集大小:");
+			scanf("%d", &n);
+			w = (float*)malloc(n * sizeof(float));
+			printf("\t\tOK!\n\t\t按任意键继续");
+			_getch();
+		}; break;
+		case 2:
+		{
+			getchar();
+			a = (char*)malloc(n * sizeof(char));
+			printf("\t\t请输入%d个待编码字符",n);
+			scanf("%s", a);
+			getchar();
+			printf("\t\t请依次输入%d个权值：", n);
+			for (i = 0; i <= n - 1; i++)
+				scanf("%f", w + i);
+			printf("\t\tOK!\n\t\t按任意键继续");
+			_getch();
+		}; break;
+		case 3:HuffmanTreeing(HT, w,a, n); break;
+		case 4:
+		{
+			HuffmanCoding(HT, HC, w, n);
+			for (i = 1; i <= n; i++)
+			{
+				printf("\t\t%c :%s\n",HT[i].name,HC[i]);
+			}
+			_getch();
+		}break;
+		case 5:return 0;
+		}
+	}
+}

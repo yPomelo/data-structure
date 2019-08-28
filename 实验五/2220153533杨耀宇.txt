@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#include <string.h>
+typedef struct BiTNode
+{
+	char data;
+	struct BiTNode *lchild,*rchild;
+}BiTNode,*BiTree; 
+BiTree T;
+void menu()
+{
+	printf("1.创建二叉树(先序)\n");
+	printf("2.先序遍历并输出遍历序列\n");
+	printf("3.中序遍历并输出遍历序列\n");
+	printf("4.后序遍历并输出遍历序列\n");
+	printf("5.统计二叉树的叶子节点数\n");
+	printf("6.退出\n");
+	printf("7.请选择：");
+}
+void CreatBiTree(BiTree &T)
+{
+	char ch;
+	scanf("%c",&ch);
+	if(ch == ' ')
+		T = NULL;
+	else
+	{
+		T = (BiTree)malloc(sizeof(BiTNode));
+		if(!T)
+			return;
+		T->data = ch;
+		CreatBiTree(T->lchild);
+		CreatBiTree(T->rchild);
+	}
+}
+void PreOrderTraverse(BiTree T)
+{
+	if(T)
+	{
+		printf("%c",T->data);
+		PreOrderTraverse(T->lchild);
+		PreOrderTraverse(T->rchild);
+	}
+}
+void InOrderTraverse(BiTree T)
+{
+	if(T)
+	{
+		InOrderTraverse(T->lchild);
+		printf("%c",T->data);
+		InOrderTraverse(T->rchild);
+	}
+}
+void PostOrderTraverse(BiTree T)
+{
+	if(T)
+	{
+		PostOrderTraverse(T->lchild);
+		PostOrderTraverse(T->rchild);
+		printf("%c",T->data);	
+	}
+}
+void CountLeaf(BiTree T,int &count)
+{
+	if(T)
+	{
+	if((!T->lchild)&&(!T->rchild))
+		count++;
+	CountLeaf(T->lchild,count);
+	CountLeaf(T->rchild,count);
+	}
+}
+int main()
+{
+	int choice,count = 0;
+	while(1)
+	{
+		system("cls");
+		menu();
+		scanf("%d",&choice);
+		getchar();
+		switch(choice)
+		{
+		case 1:CreatBiTree(T);printf("按任意键继续");_getch();break;
+		case 2:PreOrderTraverse(T);printf("\n按任意键继续");_getch();break;
+		case 3:InOrderTraverse(T);printf("\n按任意键继续");_getch();break;
+		case 4:PostOrderTraverse(T);printf("\n按任意键继续");_getch();break;
+		case 5:CountLeaf(T,count);printf("\n叶子节点数为%d",count);printf("\n按任意键继续");_getch();break;
+		case 6:	return 0;
+		}
+	}
+}
